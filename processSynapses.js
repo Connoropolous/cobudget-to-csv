@@ -1,5 +1,4 @@
 function processSynapses(data, topics) {
-  console.log(topics);
   var synapse = {
     node1_id: 1,
     node2_id: 2,

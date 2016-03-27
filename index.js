@@ -3,7 +3,7 @@ var token = process.env.METAMAPS_TOKEN;
 var async = require('async');
 var mm = require('metamaps-client');
 var CobudgetClient = require('cobudget-client');
-var myClient = new CobudgetClient({ email: 'connorturland@gmail.com', password: process.env.PASSWORD });
+var myClient = new CobudgetClient({ email: process.env.EMAIL, password: process.env.PASSWORD });
 
 var map = {
   name: 'cobudget model map',
@@ -19,7 +19,7 @@ var randomCoord = function () {
 
 myClient.init(function () {
   myClient.getItAll(function (err, results) {
-    if (err || !results) return console.log('fucky fuck fuck');
+    if (err || !results) return console.log('didn\'t work');
     async.waterfall([
       // create map
       async.apply(mm.createMap, map, token),
@@ -27,10 +27,11 @@ myClient.init(function () {
       function (map, callback) {
         var topicsToCreate = require('./processTopics.js')(results);
         var numCreated = 0;
-        async.mapSeries(
+        async.mapLimit(
            topicsToCreate,
+           5, // max number of calls to make at once
            function (topic, cb) {
-             console.log(numCreated);
+             console.log(numCreated + '/' + topicsToCreate.length);
              numCreated++;
              mm.addTopicToMap(token, map.id, randomCoord(), randomCoord(), topic, cb);
            },
@@ -52,7 +53,7 @@ myClient.init(function () {
            });
       }
     ], function (err, topics, synapses, map) {
-      if (err) return console.log('damnit so close');
+      if (err) return console.log('everything broke: ' + err);
       console.log('created EVERYTHING');
     });
   });
