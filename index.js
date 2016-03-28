@@ -26,14 +26,14 @@ myClient.init(function () {
       // create topics
       function (map, callback) {
         var topicsToCreate = require('./processTopics.js')(results);
-        var numCreated = 0;
+        var numCreated = 1;
         async.mapLimit(
            topicsToCreate,
            5, // max number of calls to make at once
            function (topic, cb) {
-             console.log(numCreated + '/' + topicsToCreate.length);
-             numCreated++;
              mm.addTopicToMap(token, map.id, randomCoord(), randomCoord(), topic, cb);
+             console.log(numCreated + '/' + topicsToCreate.length + ' topics');
+             numCreated++;
            },
            function (err, topics) {
              if (err) return callback(err);
@@ -44,9 +44,15 @@ myClient.init(function () {
       function (topics, map, callback) {
         console.log('created topics');
         var synapsesToCreate = require('./processSynapses.js')(results, topics);
-        async.mapSeries(
+        var numCreated = 1;
+        async.mapLimit(
            synapsesToCreate,
-           async.apply(mm.addSynapseToMap, token, map.id),
+           5,
+           function (synapse, cb) {
+             mm.addSynapseToMap(token, map.id, synapse, cb);
+             console.log(numCreated + '/' + synapsesToCreate.length + ' synapses');
+             numCreated++;
+           },
            function (err, synapses) {
              if (err) return callback(err);
              callback(null, topics, synapses, map);
