@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "async": "^1.5.2",
-    "cobudget-client": "^1.0.3",
+    "cobudget-client": "^1.0.4",
     "dotenv": "^2.0.0",
     "json2csv": "^3.2.0"
   }

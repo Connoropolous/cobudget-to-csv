@@ -6,7 +6,7 @@ var myClient = new CobudgetClient({ email: process.env.EMAIL, password: process.
 var json2csv = require('json2csv');
 
 myClient.init(function () {
-  myClient.getItAll(function (err, results) {
+  myClient.getItAll(process.env.GROUP_ID, function (err, results) {
     if (err || !results) return console.log('didn\'t work');
 
     var data = [];
